@@ -29,11 +29,10 @@ export default function App() {
     setError(null);
     const currentApiUrl = `/api/alerts?t=${Date.now()}`;
     try {
-      console.log(`[FRONTEND] Fetching from: ${currentApiUrl}`);
       const response = await fetch(currentApiUrl);
       if (!response.ok) {
         const errorText = await response.text();
-        throw new Error(`HTTP ${response.status} at ${currentApiUrl.split('?')[0]}: ${errorText.substring(0, 50)}...`);
+        throw new Error(`HTTP ${response.status}: ${errorText.substring(0, 50)}`);
       }
       const data = await response.json();
       if (data.status === 'error') {
@@ -47,7 +46,7 @@ export default function App() {
         setLastUpdated(new Date());
       }
     } catch (err: any) {
-      setError(`[V2.1] Connection Error: ${err.message || 'Check your internet connection'}`);
+      setError(`Connection Error: ${err.message || 'Check your internet connection'}`);
       console.error(err);
     } finally {
       setLoading(false);
@@ -126,15 +125,6 @@ export default function App() {
               >
                 <ShieldAlert className="w-12 h-12 text-red-400" />
                 <p className="mt-4 text-red-500 font-medium">{error}</p>
-                <div className="w-full mt-4">
-                  <details className="text-left text-[10px] text-zinc-400 bg-zinc-50 p-2 rounded-lg border border-zinc-100">
-                    <summary className="cursor-pointer font-bold uppercase tracking-widest">Debug Info</summary>
-                    <div className="mt-2 space-y-1 font-mono">
-                      <p>URL: {apiUrl}</p>
-                      <p>Origin: {window.location.origin}</p>
-                    </div>
-                  </details>
-                </div>
                 <button 
                   onClick={fetchStatus}
                   className="mt-6 px-6 py-2 bg-zinc-800 text-white rounded-full hover:bg-zinc-700 transition-colors"
@@ -159,14 +149,6 @@ export default function App() {
                 </h2>
                 
                 <div className="flex flex-col gap-2 w-full mt-4">
-                  <details className="text-left text-[10px] text-zinc-400 bg-zinc-50 p-2 rounded-lg border border-zinc-100">
-                    <summary className="cursor-pointer font-bold uppercase tracking-widest">Debug Info</summary>
-                    <div className="mt-2 space-y-1 font-mono">
-                      <p>URL: {apiUrl}</p>
-                      <p>Origin: {window.location.origin}</p>
-                      <p>Error: {error || 'None'}</p>
-                    </div>
-                  </details>
                   <div className="flex items-center justify-between p-4 bg-zinc-50 rounded-2xl border border-zinc-100">
                     <span className="text-zinc-500 font-medium">Beit Shemesh</span>
                     <span className={`px-3 py-1 rounded-full text-xs font-bold uppercase ${status?.beitShemesh ? 'bg-red-100 text-red-600' : 'bg-emerald-100 text-emerald-600'}`}>
