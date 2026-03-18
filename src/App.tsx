@@ -27,7 +27,8 @@ export default function App() {
     setLoading(true);
     setError(null);
     try {
-      const response = await fetch(`${window.location.origin}/api/alerts`);
+      // Add cache-busting timestamp
+      const response = await fetch(`${window.location.origin}/api/alerts?t=${Date.now()}`);
       if (!response.ok) {
         const errorText = await response.text();
         throw new Error(`HTTP ${response.status}: ${errorText.substring(0, 100)}`);
@@ -44,7 +45,7 @@ export default function App() {
         setLastUpdated(new Date());
       }
     } catch (err: any) {
-      setError(`Fetch Error: ${err.message || 'Failed to fetch alert data.'}`);
+      setError(`[V2.1] Connection Error: ${err.message || 'Check your internet connection'}`);
       console.error(err);
     } finally {
       setLoading(false);
@@ -88,6 +89,9 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-zinc-50 flex flex-col items-center justify-center p-4 font-sans">
+      <div className="mb-4 px-3 py-1 bg-zinc-200 text-zinc-600 text-[10px] font-bold rounded-full uppercase tracking-widest">
+        System Version 2.1
+      </div>
       <motion.div 
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
