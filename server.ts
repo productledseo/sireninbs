@@ -8,9 +8,15 @@ async function startServer() {
   const app = express();
   const PORT = 3000;
 
+  // Global logger
+  app.use((req, res, next) => {
+    console.log(`[DEBUG] ${new Date().toISOString()} ${req.method} ${req.url}`);
+    next();
+  });
+
   // API routes
-  app.get("/api/alerts", async (req, res) => {
-    console.log(`[${new Date().toISOString()}] GET /api/alerts`);
+  app.get(["/api/alerts", "/api/alerts/"], async (req, res) => {
+    console.log(`[${new Date().toISOString()}] Handling /api/alerts request`);
     const redAlertUrl = "https://api.redalert.me/alerts";
     const tzevaadomUrl = "https://www.tzevaadom.co.il/static/historical/all.json";
     const orefUrls = [
