@@ -10,13 +10,15 @@ async function startServer() {
 
   // Global logger
   app.use((req, res, next) => {
-    console.log(`[DEBUG] ${new Date().toISOString()} ${req.method} ${req.url}`);
+    console.log(`[SERVER DEBUG] ${new Date().toISOString()} ${req.method} ${req.url}`);
     next();
   });
 
-  // API routes
-  app.get(["/api/alerts", "/api/alerts/"], async (req, res) => {
-    console.log(`[${new Date().toISOString()}] Handling /api/alerts request`);
+  // API Router setup
+  const apiRouter = express.Router();
+  
+  apiRouter.get(["/alerts", "/alerts/"], async (req, res) => {
+    console.log(`[SERVER] Handling /api/alerts request`);
     const redAlertUrl = "https://api.redalert.me/alerts";
     const tzevaadomUrl = "https://www.tzevaadom.co.il/static/historical/all.json";
     const orefUrls = [
@@ -191,6 +193,20 @@ async function startServer() {
       console.error("Error processing alerts:", error.message);
       res.status(500).json({ status: "error", message: error.message });
     }
+  });
+
+  app.use("/api", apiRouter);
+
+  // Health check (outside router)
+  app.get("/api/ping", (req, res) => {
+    console.log("[SERVER] Ping received");
+    res.send("pong");
+  });
+
+  // Fallback logger for unmatched /api routes
+  app.use("/api", (req, res) => {
+    console.warn(`[SERVER WARN] Unmatched API request: ${req.method} ${req.url}`);
+    res.status(404).json({ error: "API route not found", path: req.url });
   });
 
   // Vite middleware for development
