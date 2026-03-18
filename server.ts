@@ -10,6 +10,7 @@ async function startServer() {
 
   // API routes
   app.get("/api/alerts", async (req, res) => {
+    console.log(`[${new Date().toISOString()}] GET /api/alerts`);
     const redAlertUrl = "https://api.redalert.me/alerts";
     const tzevaadomUrl = "https://www.tzevaadom.co.il/static/historical/all.json";
     const orefUrls = [
@@ -83,6 +84,7 @@ async function startServer() {
 
     try {
       if (!alerts || !Array.isArray(alerts)) {
+        console.error(`[${new Date().toISOString()}] No alerts found from any source`);
         return res.status(500).json({ 
           status: "error", 
           message: "Failed to fetch alerts from all sources" 

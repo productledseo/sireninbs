@@ -27,7 +27,11 @@ export default function App() {
     setLoading(true);
     setError(null);
     try {
-      const response = await fetch('/api/alerts');
+      const response = await fetch(`${window.location.origin}/api/alerts`);
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(`HTTP ${response.status}: ${errorText.substring(0, 100)}`);
+      }
       const data = await response.json();
       if (data.status === 'error') {
         setError(data.message || 'Failed to fetch alert data.');
@@ -39,8 +43,8 @@ export default function App() {
         setStatus(data);
         setLastUpdated(new Date());
       }
-    } catch (err) {
-      setError('Failed to fetch alert data. Please try again.');
+    } catch (err: any) {
+      setError(`Fetch Error: ${err.message || 'Failed to fetch alert data.'}`);
       console.error(err);
     } finally {
       setLoading(false);
@@ -49,8 +53,8 @@ export default function App() {
 
   useEffect(() => {
     fetchStatus();
-    // Refresh every 5 minutes
-    const interval = setInterval(fetchStatus, 300000);
+    // Refresh every 30 seconds
+    const interval = setInterval(fetchStatus, 30000);
     return () => clearInterval(interval);
   }, [audioEnabled]);
 
