@@ -1,0 +1,5 @@
+{
+  "name": "Siren Expected in Beit Shemesh",
+  "description": "Checks for recent alerts in Beit Shemesh and Jerusalem to predict sirens.",
+  "requestFramePermissions": []
+}
